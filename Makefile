@@ -1,4 +1,4 @@
 MODULE := dbspan
 
-run:
+demo:
 	@python -m $(MODULE) dbspan
