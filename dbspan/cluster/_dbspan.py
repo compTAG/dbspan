@@ -1,10 +1,7 @@
 from ._query import ExactRangeQuery
 
 
-
-
-
-class DBSpan:
+class DBScan:
     @staticmethod
     def noise():
         return -1
