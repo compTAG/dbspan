@@ -5,4 +5,5 @@ class ExactRangeQuery:
         self.metric = metric
 
     def query(self, q):
-        return {p for p in self.data if self.metric(p, q) <= self.eps}
+        return [p for p in self.data
+                if p != q and self.metric(p, q) <= self.eps]
