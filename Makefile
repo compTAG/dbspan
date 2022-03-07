@@ -16,4 +16,10 @@ lint:
 	@echo "\n${BLUE}Running Bandit against source files...${NC}\n"
 	@bandit -r --ini setup.cfg
 
+clean:
+	rm -rf .pytest_cache .coverage .pytest_cache coverage.xml reports
+
+veryclean: clean
+	find . | grep -E "(__pycache__|\.pyc|\.pyo)" | xargs rm -rf
+
 .PHONY: clean test lint
