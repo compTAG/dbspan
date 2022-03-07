@@ -7,11 +7,12 @@ class DBScan:
         return -1
 
     def _make_range_query(self, data):
-        return ExactRangeQuery(data, self.eps, lambda p, q: abs(p - q))
+        return ExactRangeQuery(data, self.eps, self.metric)
 
-    def __init__(self, eps=.5, min_samples=5):
+    def __init__(self, eps=.5, min_samples=5, metric=lambda p, q: abs(p - q)):
         self.eps = eps
         self.min_samples = min_samples
+        self.metric = metric
 
     def fit(self, data):
         noise = self.__class__.noise()
@@ -46,7 +47,3 @@ class DBScan:
                     seeds = seeds + q_neighbors
 
         return labels
-
-
-
-
