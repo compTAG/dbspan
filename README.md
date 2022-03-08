@@ -18,9 +18,9 @@ Activate the environment
 
     conda activate dbspan
 
-Run the demo with
+Run the tests with
 
-    make demo
+    make test
 
 When you want to clean up
 
