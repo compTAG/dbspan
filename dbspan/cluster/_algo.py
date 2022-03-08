@@ -18,31 +18,31 @@ class DBScan:
         noise = self.__class__.noise()
 
         cur_label = noise
-        labels = {}
+        labels = [None]*len(data)
         neighborhood = self._make_range_query(data)
 
-        for p in data:
-            if labels.get(p) is not None:
+        for p_idx, p in enumerate(data):
+            if labels[p_idx] is not None:
                 continue
 
-            p_neighbors = neighborhood.query(p)
+            p_neighbors = neighborhood.query(p_idx)
             if len(p_neighbors) < self.min_samples:
-                labels[p] = noise
+                labels[p_idx] = noise
                 continue
 
             cur_label += 1
-            labels[p] = cur_label
+            labels[p_idx] = cur_label
             seeds = p_neighbors
 
             while seeds:
-                q = seeds.pop(0)
+                q_idx = seeds.pop(0)
 
-                q_label = labels.get(q)
+                q_label = labels[q_idx]
                 if q_label is not None and q_label != noise:
                     continue
 
-                labels[q] = cur_label
-                q_neighbors = neighborhood.query(q)
+                labels[q_idx] = cur_label
+                q_neighbors = neighborhood.query(q_idx)
                 if len(q_neighbors) >= self.min_samples:
                     seeds = seeds + q_neighbors
 

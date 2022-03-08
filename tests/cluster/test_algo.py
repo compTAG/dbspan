@@ -3,21 +3,21 @@ import random
 from ..context import dbspan
 
 
-def test_dbscan():
-    data = [1, 2, 4, 10, 20, 21, 22]
+def ascii_diff(p, q):
+    return abs(ord(p) - ord(q))
 
-    algo = dbspan.cluster.DBScan(eps=2, min_samples=2)
+def test_dbscan():
+    data = ['a', 'b', 'd', 'k', 'u', 'v', 'w']
+    algo = dbspan.cluster.DBScan(eps=2, min_samples=2, metric=ascii_diff)
     labels = algo.fit(data)
 
-    noise = algo.__class__.noise()
-
+    assert labels[0] == 0
     assert labels[1] == 0
     assert labels[2] == 0
-    assert labels[4] == 0
-    assert labels[10] == noise
-    assert labels[20] == 1
-    assert labels[21] == 1
-    assert labels[22] == 1
+    assert labels[3] == algo.__class__.noise()
+    assert labels[4] == 1
+    assert labels[5] == 1
+    assert labels[6] == 1
 
 
 def test_dbscan_with_dgm():
@@ -57,14 +57,14 @@ def test_dbscan_with_dgm():
     algo = dbspan.cluster.DBScan(eps=.3, min_samples=3, metric=dgm1_metric)
     labels = algo.fit(dgms)
 
-    assert labels[dgms[0]] == 0
-    assert labels[dgms[1]] == 0
-    assert labels[dgms[2]] == 0
-    assert labels[dgms[3]] == 0
-    assert labels[dgms[4]] == 0
-    assert labels[dgms[5]] == 1
-    assert labels[dgms[6]] == 1
-    assert labels[dgms[7]] == 1
-    assert labels[dgms[8]] == 1
-    assert labels[dgms[9]] == 1
-    assert labels[dgms[10]] == -1
+    assert labels[0] == 0
+    assert labels[1] == 0
+    assert labels[2] == 0
+    assert labels[3] == 0
+    assert labels[4] == 0
+    assert labels[5] == 1
+    assert labels[6] == 1
+    assert labels[7] == 1
+    assert labels[8] == 1
+    assert labels[9] == 1
+    assert labels[10] == -1
