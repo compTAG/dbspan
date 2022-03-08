@@ -29,8 +29,6 @@ class ApproximateRangeQuery:
             src, targets = neighbors
             self.neighborhoods[src] = [k for k,v in targets.items() if v != 0]
 
-        print(self.neighborhoods)
-
     def query(self, q_idx):
         return self.neighborhoods[q_idx]
 
