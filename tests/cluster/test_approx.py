@@ -5,16 +5,19 @@ import networkx as nx
 
 def test_approx_init():
     def metric(x, y):
-        return abs(x - y)
+        return abs(ord(x) - ord(y))
 
     approximator = dbspan.cluster.Approximator(metric)
 
-    eps = .5
-    data = range(10)
-    spanner = approximator.approximate(data, eps)
+    n = 10
+    eps = 3
+    data = [chr(ord('a')+i) for i in range(n)]
+    approx_metric = approximator.approximate(data, eps)
 
-    for i in data:
-        for j in range(i + 1, len(data)):
-            exact_dist = metric(i, j)
-            approx_dist = nx.shortest_path_length(spanner, i, j)
+    for p_idx, p in enumerate(data):
+        for q_idx in range(p_idx+1, n):
+            q = data[q_idx]
+            exact_dist = metric(p, q)
+            approx_dist = approx_metric(p_idx, q_idx)
             assert approx_dist <= (1 + eps) * exact_dist
+

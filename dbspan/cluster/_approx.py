@@ -30,6 +30,19 @@ class EdgeSelectorBlindRandom:
         return -1, -1, True
 
 
+class ApproxMetric:
+    def __init__(self, spanner):
+        self.spanner = spanner
+
+    def __call__(self, p_idx, q_idx):
+        return nx.shortest_path_length(
+            self.spanner,
+            p_idx,
+            q_idx,
+            weight='weight',
+        )
+
+
 class KN20Approximator:
     def __init__(self, metric, edge_selector=EdgeSelectorBlindRandom()):
         self._metric = metric
@@ -37,7 +50,8 @@ class KN20Approximator:
 
     def approximate(self, data, eps):
         graph, lower, upper = self._init(data)
-        return self._compute_spanner(data, eps, graph, lower, upper)
+        spanner = self._compute_spanner(data, eps, graph, lower, upper)
+        return ApproxMetric(spanner)
 
     def _init(self, data):
         n = len(data)
