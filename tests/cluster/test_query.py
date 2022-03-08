@@ -1,20 +1,29 @@
+import pytest
+
 from ..context import dbspan
 
 
-def one_norm(p, q):
-    return abs(p - q)
+def ascii_diff(p, q):
+    return abs(ord(p) - ord(q))
 
 
 def test_exact_range_query():
-    data = [1, 2, 3]
+    data = ['a', 'b', 'c', 'h']
 
-    rq = dbspan.cluster.ExactRangeQuery(data, eps=2, metric=one_norm)
-    assert rq.query(-2) == []
-    assert rq.query(-1) == [1]
+    rq = dbspan.cluster.ExactRangeQuery(data, eps=2, metric=ascii_diff)
+    with pytest.raises(IndexError):
+        assert rq.query(6) == []
     assert rq.query(0) == [1, 2]
-    assert rq.query(1) == [2, 3]
-    assert rq.query(2) == [1, 3]
-    assert rq.query(3) == [1, 2]
-    assert rq.query(4) == [2, 3]
-    assert rq.query(5) == [3]
-    assert rq.query(6) == []
+    assert rq.query(1) == [0, 2]
+    assert rq.query(2) == [0, 1]
+    assert rq.query(3) == []
+
+
+def test_approx_range_query():
+    data = ['a', 'b', 'c', 'h']
+
+    rq = dbspan.cluster.ApproximateRangeQuery(data, eps=2, metric=ascii_diff)
+    assert set(rq.query(0)) == {1, 2}
+    assert set(rq.query(1)) == {0, 2}
+    assert set(rq.query(2)) == {0, 1}
+    assert rq.query(3) == []
