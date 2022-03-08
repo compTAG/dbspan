@@ -1,18 +1,18 @@
-from ._query import ExactRangeQuery
+from ._query import ExactRangeQuery, ApproximateRangeQuery
 
-
-class DBScan:
+class _XXScan:
     @staticmethod
     def noise():
         return -1
 
     def _make_range_query(self, data):
-        return ExactRangeQuery(data, self.eps, self.metric)
+        return self.range_query_algo(data, self.eps, self.metric)
 
-    def __init__(self, eps=.5, min_samples=5, metric=lambda p, q: abs(p - q)):
+    def __init__(self, metric, range_query_algo, eps, min_samples):
         self.eps = eps
         self.min_samples = min_samples
         self.metric = metric
+        self.range_query_algo = range_query_algo
 
     def fit(self, data):
         noise = self.__class__.noise()
@@ -47,3 +47,13 @@ class DBScan:
                     seeds = seeds + q_neighbors
 
         return labels
+
+
+class DBSCAN(_XXScan):
+    def __init__(self, metric, eps=.5, min_samples=5):
+        super().__init__(metric, ExactRangeQuery, eps, min_samples)
+
+
+class DBSpan(_XXScan):
+    def __init__(self, metric, eps=.5, min_samples=5):
+        super().__init__(metric, ApproximateRangeQuery, eps, min_samples)
