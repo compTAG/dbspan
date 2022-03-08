@@ -1,10 +1,12 @@
 import random
 
+
 from ..context import dbspan
 
 
 def ascii_diff(p, q):
     return abs(ord(p) - ord(q))
+
 
 def test_dbscan():
     data = ['a', 'b', 'd', 'k', 'u', 'v', 'w']

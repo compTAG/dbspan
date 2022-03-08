@@ -1,5 +1,6 @@
 from ._query import ExactRangeQuery, ApproximateRangeQuery
 
+
 class _XXScan:
     @staticmethod
     def noise():
@@ -18,7 +19,7 @@ class _XXScan:
         noise = self.__class__.noise()
 
         cur_label = noise
-        labels = [None]*len(data)
+        labels = [None] * len(data)
         neighborhood = self._make_range_query(data)
 
         for p_idx, p in enumerate(data):

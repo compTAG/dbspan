@@ -2,6 +2,7 @@ import networkx as nx
 
 from ._approx import KN20Approximator
 
+
 class ExactRangeQuery:
     def __init__(self, data, eps, metric):
         self.data = data
@@ -24,12 +25,10 @@ class ApproximateRangeQuery:
             cutoff=eps,
         )
 
-        self.neighborhoods = [None]*len(data)
+        self.neighborhoods = [None] * len(data)
         for neighbors in lengths:
             src, targets = neighbors
-            self.neighborhoods[src] = [k for k,v in targets.items() if v != 0]
+            self.neighborhoods[src] = [k for k, v in targets.items() if v != 0]
 
     def query(self, q_idx):
         return self.neighborhoods[q_idx]
-
-
