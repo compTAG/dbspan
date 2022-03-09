@@ -21,7 +21,18 @@ class _XXScan(abc.ABC):
         self.min_samples = min_samples
         self.metric = metric
 
-    def fit(self, data):
+    def fit(self, data, dbg=False):
+        '''
+        Run a density based clustering algorithm on the data.
+
+        Note that the interface takes a keyword argument of 'dbg'.  uSE
+        THE 'dbg' ARGUMENT WITH CAUTION!!!  It is NOT intended
+        general use (and is really just for access the internals of the
+        algorithm for the experimental section of a paper.
+
+        Keyword arguments:
+        data -- the data to use for the clustering
+        '''
         cur_label = NOISE
         labels = [NOISE - 1] * len(data)
         neighborhood = self._make_range_query(data, self.eps, self.metric)
@@ -51,7 +62,14 @@ class _XXScan(abc.ABC):
                 if len(q_neighbors) >= self.min_samples:
                     queue = queue + q_neighbors
 
-        return labels
+        if not dbg:
+            return labels
+
+        else:
+            return labels, {
+                'neighborhood': neighborhood,
+            }
+
 
 
 class DBSCAN(_XXScan):

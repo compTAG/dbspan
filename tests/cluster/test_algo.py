@@ -27,7 +27,7 @@ def test_dbscan_and_dbspan():
         metric=ascii_diff,
         delta=.1,
     )
-    labels = algo.fit(data)
+    labels, dbg_data = algo.fit(data, dbg=True)
     assert labels[0] == 1
     assert labels[1] == 1
     assert labels[2] == 1
@@ -35,6 +35,8 @@ def test_dbscan_and_dbspan():
     assert labels[4] == 2
     assert labels[5] == 2
     assert labels[6] == 2
+
+    assert 'neighborhood' in dbg_data
 
 
 def test_dbscan_and_dbspan_with_dgm():
