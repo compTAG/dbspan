@@ -18,10 +18,10 @@ class ExactRangeQuery:
 class ApproximateRangeQuery:
     def __init__(self, data, eps, metric, spanner_eps):
         approximator = KN20Approximator(metric)
-        approx_metric = approximator.approximate(data, spanner_eps)
+        self.approx_metric = approximator.approximate(data, spanner_eps)
 
         lengths = nx.all_pairs_dijkstra_path_length(
-            approx_metric.spanner,
+            self.approx_metric.spanner,
             cutoff=eps,
         )
 
@@ -32,3 +32,7 @@ class ApproximateRangeQuery:
 
     def query(self, q_idx):
         return self.neighborhoods[q_idx]
+
+    @property
+    def spanner(self):
+        return self.approx_metric.spanner

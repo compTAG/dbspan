@@ -32,3 +32,5 @@ def test_approx_range_query():
     assert set(rq.query(1)) == {0, 2}
     assert set(rq.query(2)) == {0, 1}
     assert rq.query(3) == []
+
+    assert rq.spanner is not None
