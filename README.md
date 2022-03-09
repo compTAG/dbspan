@@ -26,3 +26,10 @@ When you want to clean up
 
     conda deactivate
     conda remove -n dbspan --all
+
+
+## Acknowledgements
+
+The project setup is loosely based around Martin Heinz's [Ultimate Setup for
+Your Next Python
+Project](https://towardsdatascience.com/ultimate-setup-for-your-next-python-project-179bda8a7c2c)
