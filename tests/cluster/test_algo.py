@@ -13,13 +13,13 @@ def test_dbscan():
     algo = dbspan.cluster.DBSCAN(eps=2, min_samples=2, metric=ascii_diff)
     labels = algo.fit(data)
 
-    assert labels[0] == 0
-    assert labels[1] == 0
-    assert labels[2] == 0
-    assert labels[3] == algo.__class__.noise()
-    assert labels[4] == 1
-    assert labels[5] == 1
-    assert labels[6] == 1
+    assert labels[0] == 1
+    assert labels[1] == 1
+    assert labels[2] == 1
+    assert labels[3] == dbspan.cluster.NOISE
+    assert labels[4] == 2
+    assert labels[5] == 2
+    assert labels[6] == 2
 
 
 def test_dbscan_and_dbspan_with_dgm():
@@ -58,28 +58,28 @@ def test_dbscan_and_dbspan_with_dgm():
 
     algo = dbspan.cluster.DBSCAN(metric=dgm1_metric, eps=.3, min_samples=3)
     labels = algo.fit(dgms)
-    assert labels[0] == 0
-    assert labels[1] == 0
-    assert labels[2] == 0
-    assert labels[3] == 0
-    assert labels[4] == 0
-    assert labels[5] == 1
-    assert labels[6] == 1
-    assert labels[7] == 1
-    assert labels[8] == 1
-    assert labels[9] == 1
-    assert labels[10] == -1
+    assert labels[0] == 1
+    assert labels[1] == 1
+    assert labels[2] == 1
+    assert labels[3] == 1
+    assert labels[4] == 1
+    assert labels[5] == 2
+    assert labels[6] == 2
+    assert labels[7] == 2
+    assert labels[8] == 2
+    assert labels[9] == 2
+    assert labels[10] == dbspan.cluster.NOISE
 
     algo = dbspan.cluster.DBSpan(metric=dgm1_metric, eps=.3, min_samples=3)
     labels = algo.fit(dgms)
-    assert labels[0] == 0
-    assert labels[1] == 0
-    assert labels[2] == 0
-    assert labels[3] == 0
-    assert labels[4] == 0
-    assert labels[5] == 1
-    assert labels[6] == 1
-    assert labels[7] == 1
-    assert labels[8] == 1
-    assert labels[9] == 1
-    assert labels[10] == -1
+    assert labels[0] == 1
+    assert labels[1] == 1
+    assert labels[2] == 1
+    assert labels[3] == 1
+    assert labels[4] == 1
+    assert labels[5] == 2
+    assert labels[6] == 2
+    assert labels[7] == 2
+    assert labels[8] == 2
+    assert labels[9] == 2
+    assert labels[10] == dbspan.cluster.NOISE
