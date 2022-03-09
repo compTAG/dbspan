@@ -1,26 +1,30 @@
+import abc
+
+
 from ._query import ExactRangeQuery, ApproximateRangeQuery
 
 
 NOISE = 0
 
 
-class _XXScan:
+class _XXScan(abc.ABC):
+
+    @abc.abstractmethod
+    def _make_range_query(self, data, eps, metric):
+        pass
+
     def _is_labeled(self, label):
         return label > NOISE
 
-    def _make_range_query(self, data):
-        return self.range_query_algo(data, self.eps, self.metric)
-
-    def __init__(self, metric, range_query_algo, eps, min_samples):
+    def __init__(self, metric, eps, min_samples):
         self.eps = eps
         self.min_samples = min_samples
         self.metric = metric
-        self.range_query_algo = range_query_algo
 
     def fit(self, data):
         cur_label = NOISE
         labels = [NOISE - 1] * len(data)
-        neighborhood = self._make_range_query(data)
+        neighborhood = self._make_range_query(data, self.eps, self.metric)
 
         for p_idx, p in enumerate(data):
             if self._is_labeled(labels[p_idx]):
@@ -51,10 +55,14 @@ class _XXScan:
 
 
 class DBSCAN(_XXScan):
-    def __init__(self, metric, eps=.5, min_samples=5):
-        super().__init__(metric, ExactRangeQuery, eps, min_samples)
+    def _make_range_query(self, data, eps, metric):
+        return ExactRangeQuery(data, eps, metric)
 
 
 class DBSpan(_XXScan):
-    def __init__(self, metric, eps=.5, min_samples=5):
-        super().__init__(metric, ApproximateRangeQuery, eps, min_samples)
+    def _make_range_query(self, data, eps, metric):
+        return ApproximateRangeQuery(data, eps, metric, self.delta)
+
+    def __init__(self, metric, eps, min_samples, delta):
+        super().__init__(metric, eps, min_samples)
+        self.delta = delta
