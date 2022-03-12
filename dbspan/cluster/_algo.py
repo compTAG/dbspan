@@ -1,25 +1,55 @@
-import abc
+import numpy as np
+import sklearn.cluster
 
-
-from ._query import ExactRangeQuery, ApproximateRangeQuery
+from ._query import ApproximateRangeQuery
 
 
 NOISE = 0
 
 
-class _XXScan(abc.ABC):
-
-    @abc.abstractmethod
-    def _make_range_query(self, data, eps, metric):
-        pass
-
-    def _is_labeled(self, label):
-        return label > NOISE
-
+class DBSCAN:
     def __init__(self, metric, eps, min_samples):
         self.eps = eps
         self.min_samples = min_samples
         self.metric = metric
+
+    def _pairwise_distance_matrix(self, data):
+        n = len(data)
+        dist_matrix = np.zeros((n, n))
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                dist = self.metric(data[i], data[j])
+                dist_matrix[i][j] = dist
+                dist_matrix[j][i] = dist
+
+        return dist_matrix
+
+    def fit(self, data):
+        dist_matrix = self._pairwise_distance_matrix(data)
+
+        clustering = sklearn.cluster.DBSCAN(
+            eps=self.eps,
+            min_samples=self.min_samples,
+            metric='precomputed',
+        )
+        clustering.fit(dist_matrix)
+
+        # scikit learn uses -1 for noise, to be consistent between the
+        # implementation and the code we add 1 to the scikit learn labels
+        # so that 0 is noise and cluster labels are positive.
+        return clustering.labels_ + 1
+
+
+class DBSpan:
+    def _is_labeled(self, label):
+        return label > NOISE
+
+    def __init__(self, metric, eps, min_samples, delta):
+        self.eps = eps
+        self.min_samples = min_samples
+        self.metric = metric
+        self.delta = delta
 
     def fit(self, data, dbg=False):
         '''
@@ -35,7 +65,12 @@ class _XXScan(abc.ABC):
         '''
         cur_label = NOISE
         labels = [NOISE - 1] * len(data)
-        neighborhood = self._make_range_query(data, self.eps, self.metric)
+        neighborhood = ApproximateRangeQuery(
+            data,
+            self.eps,
+            self.metric,
+            self.delta,
+        )
 
         for p_idx, p in enumerate(data):
             if self._is_labeled(labels[p_idx]):
@@ -69,18 +104,3 @@ class _XXScan(abc.ABC):
             return labels, {
                 'neighborhood': neighborhood,
             }
-
-
-
-class DBSCAN(_XXScan):
-    def _make_range_query(self, data, eps, metric):
-        return ExactRangeQuery(data, eps, metric)
-
-
-class DBSpan(_XXScan):
-    def _make_range_query(self, data, eps, metric):
-        return ApproximateRangeQuery(data, eps, metric, self.delta)
-
-    def __init__(self, metric, eps, min_samples, delta):
-        super().__init__(metric, eps, min_samples)
-        self.delta = delta
